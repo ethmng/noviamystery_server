@@ -1,0 +1,11 @@
+services:
+  noviamystery-api:
+    image: php:8.3-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    command: >
+      bash -c "a2enmod rewrite
+      && apache2-foreground"

@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Classement généré en production (conserver le dossier via .gitkeep)
+data/leaderboard.json
+!data/.gitkeep
+!data/.htaccess

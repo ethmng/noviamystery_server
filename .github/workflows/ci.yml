@@ -1,0 +1,35 @@
+name: CI NoviaMystery Server
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+jobs:
+  php-lint-and-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Vérification syntaxe PHP
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Démarrer le serveur PHP intégré
+        run: |
+          mkdir -p data
+          echo '[]' > data/leaderboard.json
+          php -S 127.0.0.1:8080 index.php > /tmp/php-server.log 2>&1 &
+          sleep 2
+
+      - name: Tests API smoke
+        run: chmod +x tests/api_smoke.sh && tests/api_smoke.sh http://127.0.0.1:8080
