@@ -230,12 +230,47 @@ Le client (`../client`) consomme cette API via `network/api.py` :
 
 En cas d'indisponibilité, le client bascule en **mode hors-ligne** (`core/offline_scenario.py`).
 
+## Déploiement (checklist)
+
+Uploadez **tous** ces fichiers ensemble :
+
+```
+index.php
+config.php
+generator.php
+.htaccess
+data/.htaccess
+data/leaderboard.json   (contenu : [])
+```
+
+Puis vérifiez :
+
+```bash
+curl "https://python.api.noviacode.fr/?route=/mystery/status"
+curl "https://python.api.noviacode.fr/deploy_check.php"
+```
+
+Réponse attendue du status :
+
+```json
+{"status": "ok", "version": "1.1.0", "date": "..."}
+```
+
+Supprimez `deploy_check.php` après validation.
+
+### Cause fréquente du HTTP 500
+
+- Fichiers déployés partiellement (`index.php` sans `config.php` ou `generator.php`)
+- PHP &lt; 8.0 avec ancienne syntaxe `mixed` (corrigé en 1.1.0)
+- Dossier `data/` non inscriptible
+
 ## Dépannage
 
 | Problème | Solution |
 |----------|----------|
-| `500` ou JSON invalide | Vérifier `display_errors` désactivé, logs PHP |
-| Classement vide après victoire | Droits d'écriture sur `data/` |
+| **HTTP 500** | Déployer les 3 PHP + `data/`, lancer `deploy_check.php`, consulter logs Apache/PHP |
+| JSON invalide | Vérifier `display_errors` désactivé, logs PHP |
+| Classement vide après victoire | Droits d'écriture sur `data/` (`chmod 775 data`) |
 | Client « serveur injoignable » | URL, firewall, CORS, HTTPS |
 | Scénario différent chaque requête | Vérifier la date système du serveur |
 | Maintenance non détectée | `MAINTENANCE_MODE` dans `config.php`, HTTP 200 attendu |

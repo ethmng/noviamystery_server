@@ -6,7 +6,11 @@ declare(strict_types=1);
  * La solution (coupable, arme, pièce) reste côté serveur uniquement.
  */
 
-function generateScenario(?string $date = null): array
+if (!defined('LEADERBOARD_MAX_ENTRIES')) {
+    define('LEADERBOARD_MAX_ENTRIES', 20);
+}
+
+function generateScenario($date = null): array
 {
     $date = $date ?? date('Y-m-d');
     $seedBase = 'noviacode-mystery-' . $date;
@@ -162,21 +166,21 @@ function buildClues(string $weapon, string $room, string $culprit, string $seed)
     return [
         [
             'name' => 'Empreinte de gant',
-            'description' => 'Une trace de gant trempée dans de la cire.',
+            'description' => "Une trace de cire correspond à l'arme du crime : {$weapon}.",
             'category' => 'weapon',
             'value' => $weapon,
             'room' => $clueRooms[1],
         ],
         [
             'name' => 'Porte entrouverte',
-            'description' => 'La porte d\'une pièce était légèrement entrouverte.',
+            'description' => "Cette porte mène à la pièce du crime : {$room}.",
             'category' => 'room',
             'value' => $room,
             'room' => $clueRooms[2],
         ],
         [
             'name' => 'Mouchoir brodé',
-            'description' => 'Un mouchoir marqué d\'initiales suspectes.',
+            'description' => "Les initiales pointent vers le suspect : {$culprit}.",
             'category' => 'suspect',
             'value' => $culprit,
             'room' => $clueRooms[3],
